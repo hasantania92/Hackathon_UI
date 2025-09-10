@@ -1,24 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import Home from "./pages/Home";
+import UploadPage from "./pages/UploadPage";
+import LibraryPage from "./pages/LibraryPage";
+import CompliancePage from "./pages/CompliancePage";
+import ChatBot from "./components/ChatBot";   // 👈 import chatbot
+import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="app-container">
+        <Sidebar />
+        <div className="content-container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/upload" element={<UploadPage />} />
+            <Route path="/library" element={<LibraryPage />} />
+            <Route path="/compliance" element={<CompliancePage />} />
+          </Routes>
+        </div>
+        <ChatBot /> {/* 👈 floating AI Assistant */}
+      </div>
+    </Router>
   );
 }
 
