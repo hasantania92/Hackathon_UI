@@ -10,7 +10,7 @@ const UploadPage = () => {
   // Fetch uploaded docs
   const fetchDocuments = async () => {
     try {
-      const res = await axios.get("/api/documents");
+      const res = await axios.get("http://localhost:8080/api/documents"); // ✅ full URL
       setDocuments(res.data);
     } catch (err) {
       console.error("Error fetching documents", err);
@@ -49,9 +49,9 @@ const UploadPage = () => {
     try {
       setUploading(true);
       setMessage("");
-      await axios.post("/api/documents/upload", formData, {
+      await axios.post("http://localhost:8080/api/documents/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      });
+      }); // ✅ full URL
       setMessage("File uploaded successfully!");
       setSelectedFile(null);
       fetchDocuments(); // refresh list
@@ -107,23 +107,36 @@ const UploadPage = () => {
             documents.map((doc) => (
               <tr key={doc.id}>
                 <td>{doc.name}</td>
-                <td>{new Date(doc.createdAt).toLocaleString()}</td>
+                <td>{new Date(doc.uploadedAt).toLocaleString()}</td>
                 <td>
-                  <button onClick={() => window.open(`/api/documents/${doc.id}/diagram`, "_blank")}>
+                  <button
+                    onClick={() =>
+                      window.open(`http://localhost:8080/api/documents/${doc.id}/diagram`, "_blank")
+                    }
+                  >
                     View Diagram
                   </button>
-                  <button onClick={async () => {
-                    const res = await axios.get(`/api/documents/${doc.id}/compliance`);
-                    alert(JSON.stringify(res.data, null, 2));
-                  }}>
+                  <button
+                    onClick={async () => {
+                      const res = await axios.get(
+                        `http://localhost:8080/api/documents/${doc.id}/compliance`
+                      );
+                      alert(JSON.stringify(res.data, null, 2));
+                    }}
+                  >
                     Check Compliance
                   </button>
-                  <button onClick={async () => {
-                    const q = prompt("Ask something about this document:");
-                    if (!q) return;
-                    const res = await axios.get(`/api/documents/${doc.id}/chat`, { params: { q } });
-                    alert(res.data);
-                  }}>
+                  <button
+                    onClick={async () => {
+                      const q = prompt("Ask something about this document:");
+                      if (!q) return;
+                      const res = await axios.get(
+                        `http://localhost:8080/api/documents/${doc.id}/chat`,
+                        { params: { q } }
+                      );
+                      alert(res.data);
+                    }}
+                  >
                     Ask AI
                   </button>
                 </td>
