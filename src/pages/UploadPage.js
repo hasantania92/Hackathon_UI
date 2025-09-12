@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ import navigate hook
 
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // ✅ initialize navigate
 
   // Fetch uploaded docs
   const fetchDocuments = async () => {
@@ -117,12 +119,7 @@ const UploadPage = () => {
                     View Diagram
                   </button>
                   <button
-                    onClick={async () => {
-                      const res = await axios.get(
-                        `http://localhost:8080/api/documents/${doc.id}/compliance`
-                      );
-                      alert(JSON.stringify(res.data, null, 2));
-                    }}
+                    onClick={() => navigate(`/compliance?docId=${doc.id}`)} // ✅ redirect instead of alert
                   >
                     Check Compliance
                   </button>
