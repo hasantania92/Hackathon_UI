@@ -35,18 +35,18 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px; /* spacing between tabs */
+  gap: 12px;
 }
 
 .sidebar-links li {
-  margin: 0; /* remove old margin */
+  margin: 0;
 }
 
 .sidebar-links a {
   display: block;
   padding: 12px 16px;
   border-radius: 8px;
-  background: #334155; /* slightly lighter background */
+  background: #334155;
   color: #cbd5e1;
   font-size: 15px;
   font-weight: 500;
@@ -60,7 +60,6 @@
   transform: translateX(4px);
 }
 
-/* Active tab (optional if you track active page) */
 .sidebar-links a.active {
   background: #38bdf8;
   color: #fff;
@@ -147,6 +146,7 @@
   border-top: 1px solid #e2e8f0;
   padding-top: 10px;
 }
+
 /* Upload Page */
 .upload-container {
   background: #fff;
@@ -226,6 +226,7 @@
 .doc-table button:hover {
   background: #1e293b;
 }
+
 /* Dropzone */
 .dropzone {
   margin: 15px 0;
@@ -263,6 +264,7 @@
 .upload-btn:hover {
   background: #1e293b;
 }
+
 /* Solution Library */
 .library-container {
   background: #fff;
@@ -278,7 +280,8 @@
 }
 
 .solution-form input,
-.solution-form textarea {
+.solution-form textarea,
+.solution-form select {
   padding: 10px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
@@ -297,72 +300,106 @@
 }
 
 .solution-form button:hover {
-  background: #1e293b;
+  background: #0f172a;
 }
 
-.search-box {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  margin-bottom: 20px;
-}
-
-.solutions-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 15px;
-}
-
-.solution-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 15px;
-  background: #f8fafc;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.solution-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
-}
-
-.solution-card h3 {
-  margin: 0 0 10px 0;
-  font-size: 16px;
-  color: #1e293b;
-}
-
-.solution-card p {
-  margin: 0;
-  font-size: 14px;
-  color: #475569;
-}
 /* Search bar */
 .search-bar {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
+  align-items: center;
+}
+
+.search-bar .search-box {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
 }
 
 .search-bar button {
   background: #1e293b;
   color: white;
   border: none;
-  height:35px;
-  padding: 8px 14px;
+  height: 38px;
+  padding: 0 16px;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .search-bar button:hover {
+  background: #0f172a;
+}
+
+/* Solutions Grid */
+.solutions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+/* Solution Card */
+.solution-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.solution-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+
+.solution-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.solution-card p {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #475569;
+  flex: 1;
+}
+
+/* Action buttons inside card (always visible now) */
+.solution-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.solution-actions button,
+.solution-actions a {
+  background: #475569;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.solution-actions button:hover,
+.solution-actions a:hover {
   background: #1e293b;
 }
 
 /* Tags */
 .tags {
-  margin-top: 10px;
+  margin-top: 8px;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -376,6 +413,22 @@
   border-radius: 12px;
   font-weight: 500;
 }
+
+/* Recommended Section */
+.recommended-box {
+  border: 2px solid #38bdf8;
+  background: #f0f9ff;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.recommended-box h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #0c4a6e;
+}
+
 /* ChatBot */
 .chatbot-container {
   position: fixed;
@@ -394,16 +447,20 @@
 }
 
 .chatbot-window {
-  width: 300px;
-  height: 400px;
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  width: 400px;   /* was smaller */
+  height: 500px;  /* taller for multiple issues */
   background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
-  box-shadow: 0px 6px 16px rgba(0,0,0,0.2);
-  margin-bottom: 10px;
+  overflow: hidden;
+  z-index: 9999;
 }
+
 
 .chatbot-header {
   background: #1e293b;
@@ -460,64 +517,8 @@
   cursor: pointer;
   border-radius: 0 0 10px 0;
 }
+
 /* Compliance Page */
-.compliance-container {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.doc-select {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.doc-select select {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-}
-
-.doc-select button {
-  background: #1e293b;
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.doc-select button:hover {
-  background: #1e293b;
-}
-
-.compliance-result {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #f8fafc;
-}
-
-.compliance-result h3 {
-  margin: 0 0 10px 0;
-}
-
-.compliance-result ul {
-  list-style: none;
-  padding-left: 0;
-}
-
-.compliance-result li {
-  margin: 6px 0;
-  color: #b91c1c;
-  font-size: 14px;
-}
-
-/* Compliance Page Enhancements */
 .compliance-container {
   background: #fff;
   padding: 30px;
@@ -538,11 +539,11 @@
 }
 
 .status-passed {
-  color: #16a34a; /* green */
+  color: #16a34a;
 }
 
 .status-failed {
-  color: #dc2626; /* red */
+  color: #dc2626;
 }
 
 .compliance-score {
@@ -579,25 +580,25 @@
   margin-bottom: 0;
 }
 
-/* Severity Colors */
 .severity-high {
-  color: #dc2626; /* red */
+  color: #dc2626;
   background: #fee2e2;
 }
 
 .severity-medium {
-  color: #d97706; /* orange */
+  color: #d97706;
   background: #ffedd5;
 }
 
 .severity-low {
-  color: #ca8a04; /* yellow */
+  color: #ca8a04;
   background: #fef9c3;
 }
 
 .issue-item span {
   margin-left: 6px;
 }
+
 /* Compliance History Table */
 .compliance-history {
   margin-top: 25px;
@@ -627,9 +628,8 @@
   border-bottom: 1px solid #e2e8f0;
 }
 
-/* ✅ Greyish header aligned with button style */
 .compliance-history th {
-  background: #475569;  /* same as your button */
+  background: #475569;
   color: #fff;
   font-weight: 600;
   text-transform: uppercase;
@@ -641,6 +641,89 @@
 }
 
 .compliance-history tr:nth-child(even) td {
-  background: #f1f5f9; /* alternate row */
+  background: #f1f5f9;
+}
+/* Compliance Page Specific Styles */
+.doc-select {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.doc-select select {
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 220px;
+  background: #fff;
+  color: #1e293b;
+}
+
+.doc-select button {
+  background: #1e293b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+  height: 40px;
+}
+
+.doc-select button:hover {
+  background: #0f172a;
+}
+/* Delete button styling */
+.doc-table .delete-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.doc-table .delete-btn:hover {
+  background: #b91c1c;
+}
+
+.user-message {
+  background: #2563eb;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-width: 75%;
+  margin-left: auto;
+  font-size: 14px;
+}
+
+.bot-message {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 12px 14px;
+  border-radius: 8px;
+  max-width: 90%;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1f2937;
+  white-space: pre-wrap;
+}
+
+.bot-message strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+.bot-message ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.bot-message li {
+  margin-bottom: 6px;
 }
 

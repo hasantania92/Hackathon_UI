@@ -5,7 +5,6 @@ import Home from "./pages/Home";
 import UploadPage from "./pages/UploadPage";
 import LibraryPage from "./pages/LibraryPage";
 import CompliancePage from "./pages/CompliancePage";
-import ChatBot from "./components/ChatBot";   // 👈 import chatbot
 import "./App.css";
 
 function App() {
@@ -21,7 +20,6 @@ function App() {
             <Route path="/compliance" element={<CompliancePage />} />
           </Routes>
         </div>
-        <ChatBot /> {/* 👈 floating AI Assistant */}
       </div>
     </Router>
   );

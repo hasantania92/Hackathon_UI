@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // ✅ import navigate hook
+import { useNavigate } from "react-router-dom";
 
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // ✅ initialize navigate
+  const navigate = useNavigate();
 
-  // Fetch uploaded docs
   const fetchDocuments = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/documents"); // ✅ full URL
+      const res = await axios.get("http://localhost:8080/api/documents");
       setDocuments(res.data);
     } catch (err) {
       console.error("Error fetching documents", err);
@@ -23,12 +22,10 @@ const UploadPage = () => {
     fetchDocuments();
   }, []);
 
-  // Handle file select
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
 
-  // Handle drag & drop
   const handleDrop = (e) => {
     e.preventDefault();
     setSelectedFile(e.dataTransfer.files[0]);
@@ -38,7 +35,6 @@ const UploadPage = () => {
     e.preventDefault();
   };
 
-  // Upload file
   const handleUpload = async () => {
     if (!selectedFile) {
       setMessage("Please select a file first.");
@@ -53,10 +49,10 @@ const UploadPage = () => {
       setMessage("");
       await axios.post("http://localhost:8080/api/documents/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      }); // ✅ full URL
+      });
       setMessage("File uploaded successfully!");
       setSelectedFile(null);
-      fetchDocuments(); // refresh list
+      fetchDocuments();
     } catch (err) {
       console.error("Upload failed", err);
       setMessage("Upload failed. Try again.");
@@ -65,22 +61,30 @@ const UploadPage = () => {
     }
   };
 
+  const handleDelete = async (id, name) => {
+    if (!window.confirm(`Delete document "${name}"? This will also remove linked solutions.`)) {
+      return;
+    }
+    try {
+      await axios.delete(`http://localhost:8080/api/documents/${id}`);
+      fetchDocuments();
+    } catch (err) {
+      alert("Failed to delete document");
+      console.error(err);
+    }
+  };
+
   return (
     <div className="upload-container">
       <h2 className="page-title">Upload Documents</h2>
 
-      {/* Dropzone */}
       <div
         className="dropzone"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onClick={() => document.getElementById("fileInput").click()}
       >
-        {selectedFile ? (
-          <p>{selectedFile.name}</p>
-        ) : (
-          <p>Drag & drop a file here, or click to select</p>
-        )}
+        {selectedFile ? <p>{selectedFile.name}</p> : <p>Drag & drop a file here, or click to select</p>}
         <input
           id="fileInput"
           type="file"
@@ -118,23 +122,14 @@ const UploadPage = () => {
                   >
                     View Diagram
                   </button>
-                  <button
-                    onClick={() => navigate(`/compliance?docId=${doc.id}`)} // ✅ redirect instead of alert
-                  >
+                  <button onClick={() => navigate(`/compliance?docId=${doc.id}`)}>
                     Check Compliance
                   </button>
                   <button
-                    onClick={async () => {
-                      const q = prompt("Ask something about this document:");
-                      if (!q) return;
-                      const res = await axios.get(
-                        `http://localhost:8080/api/documents/${doc.id}/chat`,
-                        { params: { q } }
-                      );
-                      alert(res.data);
-                    }}
+                    className="delete-btn"
+                    onClick={() => handleDelete(doc.id, doc.name)}
                   >
-                    Ask AI
+                    Delete
                   </button>
                 </td>
               </tr>
