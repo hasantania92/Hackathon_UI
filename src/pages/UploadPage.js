@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +7,8 @@ const UploadPage = () => {
   const [uploading, setUploading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [message, setMessage] = useState("");
+  const [editingDoc, setEditingDoc] = useState(null); // doc currently in draw.io editor
+  const iframeRef = useRef(null);
   const navigate = useNavigate();
 
   const fetchDocuments = async () => {
@@ -74,10 +76,70 @@ const UploadPage = () => {
     }
   };
 
+  const openDiagramEditor = async (doc) => {
+    try {
+      // Fetch XML from backend
+      const res = await axios.get(`http://localhost:8080/api/documents/${doc.id}/diagramXml`);
+      let xml = res.data;
+
+      // ✅ Wrap XML if only <mxGraphModel> provided
+      if (!xml.trim().startsWith("<mxfile")) {
+        xml = `<mxfile host="app.diagrams.net"><diagram name="Page-1">${xml}</diagram></mxfile>`;
+      }
+
+      setEditingDoc({ ...doc, xml });
+    } catch (err) {
+      alert("Failed to load diagram XML");
+      console.error(err);
+    }
+  };
+
+  // Listen for messages from draw.io iframe
+  useEffect(() => {
+    const handleMessage = async (event) => {
+      if (!event.data) return;
+      const msg = event.data;
+
+      if (msg.event === "save" && editingDoc) {
+        try {
+          await axios.post(
+            `http://localhost:8080/api/documents/${editingDoc.id}/diagramXml/save`,
+            msg.xml,
+            { headers: { "Content-Type": "application/xml" } }
+          );
+          alert("Diagram saved successfully!");
+          setEditingDoc(null);
+        } catch (err) {
+          alert("Failed to save diagram");
+          console.error(err);
+        }
+      } else if (msg.event === "exit") {
+        setEditingDoc(null);
+      } else if (msg.event === "init" && editingDoc && iframeRef.current) {
+        // ✅ Encode XML to base64
+        const b64 = btoa(unescape(encodeURIComponent(editingDoc.xml)));
+
+        // Send both raw XML and base64 (draw.io accepts either)
+        iframeRef.current.contentWindow.postMessage(
+          {
+            action: "load",
+            xml: editingDoc.xml,
+            xmlb64: b64,
+          },
+          "*"
+        );
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [editingDoc]);
+
   return (
     <div className="upload-container">
       <h2 className="page-title">Upload Documents</h2>
 
+      {/* Upload Area */}
       <div
         className="dropzone"
         onDrop={handleDrop}
@@ -115,20 +177,9 @@ const UploadPage = () => {
                 <td>{doc.name}</td>
                 <td>{new Date(doc.uploadedAt).toLocaleString()}</td>
                 <td>
-                  <button
-                    onClick={() =>
-                      window.open(`http://localhost:8080/api/documents/${doc.id}/diagram`, "_blank")
-                    }
-                  >
-                    View Diagram
-                  </button>
-                  <button onClick={() => navigate(`/compliance?docId=${doc.id}`)}>
-                    Check Compliance
-                  </button>
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(doc.id, doc.name)}
-                  >
+                  <button onClick={() => openDiagramEditor(doc)}>Edit Diagram</button>
+                  <button onClick={() => navigate(`/compliance?docId=${doc.id}`)}>Check Compliance</button>
+                  <button className="delete-btn" onClick={() => handleDelete(doc.id, doc.name)}>
                     Delete
                   </button>
                 </td>
@@ -141,6 +192,21 @@ const UploadPage = () => {
           )}
         </tbody>
       </table>
+
+      {/* Embedded Draw.io Editor */}
+      {editingDoc && (
+        <div className="diagram-editor-modal">
+          <iframe
+            ref={iframeRef}
+            title="Draw.io Editor"
+            src={`https://embed.diagrams.net/?embed=1&ui=min&proto=json&spin=0&saveAndExit=1&noExitBtn=0`}
+            width="100%"
+            height="600"
+            frameBorder="0"
+            style={{ border: "1px solid #ccc" }}
+          ></iframe>
+        </div>
+      )}
     </div>
   );
 };
